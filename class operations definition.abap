@@ -85,9 +85,21 @@ CLASS operations IMPLEMENTATION.
             display_result( 'quotient' value1 value2 result ).
         ELSE.
         result = 0.
+        ENDIF.
     ENDMETHOD.
 
     METHOD display_result.
         WRITE: / 'The', operation, 'of', value1, 'and', value2, 'is', result.
     ENDMETHOD.
 ENDCLASS.
+
+START-OF-SELECTION.
+DATA(calculator) = NEW operations( ).
+DATA(resultado_suma) = calculator->add( 10.5 20.7 ).
+DATA(resultado_resta) = calculator->subtract( 20.7 10.5 ).
+DATA(resultado_producto) = calculator->multiply( 10.5 20.7 ).
+DATA(resultado_cociente) = calculator->divide( 20.7 10.5 ).
+
+" Llamada correcta al método display_result
+calculator->display_result( 'sum' 10.5 20.7 resultado_suma ).
+END-OF-SELECTION.
