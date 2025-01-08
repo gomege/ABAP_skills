@@ -1,105 +1,109 @@
-CLASS operations DEFINITION.
+CLASS z_basic_operations DEFINITION PUBLIC.
     PUBLIC SECTION.
+        TYPES: dec2 TYPE p LENGTH 8 DECIMALS 2.
         METHODS:
-            "! Adds two decimal numbers and displays the result
+            "! Adds two decimal numbers and formats the result
             "! @parameter value1 | First number to be added
             "! @parameter value2 | Second number to be added
-            "! @returning result | The sum of value1 and value2
+            "! @returning result | Formatted string with the sum of value1 and value2
             add
                 IMPORTING
-                    value1 TYPE p DECIMALS 2
-                    value2 TYPE p DECIMALS 2
+                    value1 TYPE dec2
+                    value2 TYPE dec2
                 RETURNING
-                    VALUE(result) TYPE p DECIMALS 2,
+                    VALUE(result) TYPE string,
 
-            "! Subtracts one decimal number from another and displays the result
+            "! Subtracts one decimal number from another and formats the result
             "! @parameter value1 | Number to be subtracted from
             "! @parameter value2 | Number to subtract
-            "! @returning result | The difference between value1 and value2
+            "! @returning result | Formatted string with the difference between value1 and value2
             subtract
                 IMPORTING
-                    value1 TYPE p DECIMALS 2
-                    value2 TYPE p DECIMALS 2
+                    value1 TYPE dec2
+                    value2 TYPE dec2
                 RETURNING
-                    VALUE(result) TYPE p DECIMALS 2,
+                    VALUE(result) TYPE string,
 
-            "! Multiplies two decimal numbers and displays the result
+            "! Multiplies two decimal numbers and formats the result
             "! @parameter value1 | First number to be multiplied
             "! @parameter value2 | Second number to be multiplied
-            "! @returning result | The product of value1 and value2
+            "! @returning result | Formatted string with the product of value1 and value2
             multiply
                 IMPORTING
-                    value1 TYPE p DECIMALS 2
-                    value2 TYPE p DECIMALS 2
+                    value1 TYPE dec2
+                    value2 TYPE dec2
                 RETURNING
-                    VALUE(result) TYPE p DECIMALS 2,
+                    VALUE(result) TYPE string,
 
-            "! Divides one decimal number by another and displays the result
+            "! Divides one decimal number by another and formats the result
             "! @parameter value1 | Number to be divided
             "! @parameter value2 | Number to divide by
-            "! @returning result | The quotient of value1 divided by value2
+            "! @returning result | Formatted string with the quotient of value1 divided by value2
             divide
                 IMPORTING
-                    value1 TYPE p DECIMALS 2
-                    value2 TYPE p DECIMALS 2
+                    value1 TYPE dec2
+                    value2 TYPE dec2
                 RETURNING
-                    VALUE(result) TYPE p DECIMALS 2,
+                    VALUE(result) TYPE string,
 
-            "! Displays the result of an arithmetic operation
+            "! Formats the result of an arithmetic operation
             "! @parameter operation | Name of the arithmetic operation performed
             "! @parameter value1 | First operand of the operation
             "! @parameter value2 | Second operand of the operation
             "! @parameter result | Result of the operation
-            display_result
+            "! @returning formatted_result | Formatted string with the operation result
+            format_result
                 IMPORTING
                     operation TYPE string
-                    value1 TYPE p DECIMALS 2
-                    value2 TYPE p DECIMALS 2
-                    result TYPE p DECIMALS 2.
+                    value1    TYPE dec2
+                    value2    TYPE dec2
+                    result    TYPE dec2
+                RETURNING
+                    VALUE(formatted_result) TYPE string.
 
-        PRIVATE SECTION.
-            DATA:
-                result TYPE p DECIMALS 2.
+    PRIVATE SECTION.
+        DATA: calc_result TYPE dec2.
 
 ENDCLASS.
 
-CLASS operations IMPLEMENTATION.
+CLASS z_basic_operations IMPLEMENTATION.
     METHOD add.
-        result = value1 + value2.
-        display_result( 'sum' value1 value2 result ).
+        calc_result = value1 + value2.
+        result = format_result( operation = 'sum'
+                                value1    = value1
+                                value2    = value2
+                                result    = calc_result ).
     ENDMETHOD.
 
     METHOD subtract.
-        result = value1 - value2.
-        display_result( 'difference' value1 value2 result ).
+        calc_result = value1 - value2.
+        result = format_result( operation = 'difference'
+                                value1    = value1
+                                value2    = value2
+                                result    = calc_result ).
     ENDMETHOD.
 
     METHOD multiply.
-        result = value1 * value2.
-        display_result( 'product' value1 value2 result ).
+        calc_result = value1 * value2.
+        result = format_result( operation = 'product'
+                                value1    = value1
+                                value2    = value2
+                                result    = calc_result ).
     ENDMETHOD.
 
     METHOD divide.
         IF value2 <> 0.
-            result = value1 / value2.
-            display_result( 'quotient' value1 value2 result ).
+            calc_result = value1 / value2.
+            result = format_result( operation = 'quotient'
+                                    value1    = value1
+                                    value2    = value2
+                                    result    = calc_result ).
         ELSE.
-        result = 0.
+            result = 'Error: Division by zero is not allowed.'.
         ENDIF.
     ENDMETHOD.
 
-    METHOD display_result.
-        WRITE: / 'The', operation, 'of', value1, 'and', value2, 'is', result.
+    METHOD format_result.
+        formatted_result = |The { operation } of { value1 } and { value2 } is { result }.|.
     ENDMETHOD.
 ENDCLASS.
-
-START-OF-SELECTION.
-DATA(calculator) = NEW operations( ).
-DATA(resultado_suma) = calculator->add( 10.5 20.7 ).
-DATA(resultado_resta) = calculator->subtract( 20.7 10.5 ).
-DATA(resultado_producto) = calculator->multiply( 10.5 20.7 ).
-DATA(resultado_cociente) = calculator->divide( 20.7 10.5 ).
-
-" Llamada correcta al método display_result
-calculator->display_result( 'sum' 10.5 20.7 resultado_suma ).
-END-OF-SELECTION.
