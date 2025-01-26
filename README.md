@@ -15,20 +15,22 @@ Focus of this repo is to register topics and achieved milestones on self learnin
 ---
 <br/>
 
-## :wrench: How To... Build
+## :wrench: How To... Metodology
 
-### For ABAP Platform Cloud
-Choose this if you are working on SAP BTP or SAP S/4HANA Cloud, public edition. 
+### Detail registration of current project
+* A project or challenge is chosen.
+* Topics to practice are indicated
+* Status of development registered 
 
 
-### For ABAP Platform
-Choose this if you are working on SAP S/4HANA, on-premise edition or SAP S/4HANA Cloud, private edition.
+### Graphic visualization
+In order to easily pickup after long periods of not working in the project, a graphic visualization to be included.
 
-To import the feature showcase app into your ABAP system, follow the steps in the relevant README file and download the sources from the branch corresponding to your backend version: 
+With redundant documentation of the achievements, an easy engagement in further development should be achieved. All this documentation should be maintaind within the repository. 
 
-### SAP BTP ABAP Environment Trial
+### Perfectionating methodology
 
-If you don’t have a system available, you could also try it out in the SAP BTP ABAP Environment Trial systems. Check out this [tutorial](https://developers.sap.com/tutorials/abap-environment-trial-onboarding.html) on how to get a trial user.
+Purpose of the repo is to improve a learning methodology.
 
 <br/>
 
