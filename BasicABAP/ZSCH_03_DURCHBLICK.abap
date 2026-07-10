@@ -3,7 +3,7 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZSCH_03_DURCHBLICK.
+REPORT zsch_03_durchblick.
 
 DATA: lv_werks TYPE werks_d,
       lv_matnr TYPE matnr,
@@ -11,13 +11,15 @@ DATA: lv_werks TYPE werks_d,
 
 START-OF-SELECTION.
 
-  " Set the plant and material number
-  lv_werks = 'C1M0'. " Example plant
-  lv_matnr = '10123867'. " Example material number
+  lv_werks = 'C1M0'.
+  lv_matnr = '10216750'.
 
-  " Fetch the material description from MARA and MAKT tables
-  SELECT SINGLE maktg INTO lv_maktx
-    FROM makt
+  " Convert to internal format (adds leading zeros)
+  CALL FUNCTION 'CONVERSION_EXIT_MATN1_INPUT'
+    EXPORTING input  = lv_matnr
+    IMPORTING output = lv_matnr.
+
+  SELECT SINGLE maktg FROM makt INTO lv_maktx
     WHERE matnr = lv_matnr
       AND spras = sy-langu.
 
