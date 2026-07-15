@@ -3,28 +3,23 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZSCH_03_DURCHBLICK.
+REPORT zsch_03_durchblick.
 
-DATA: lv_werks TYPE werks_d,
-      lv_matnr TYPE matnr,
-      lv_maktx TYPE maktg.
+PARAMETERS: p_werks TYPE werks_d OBLIGATORY,
+            p_matnr TYPE matnr OBLIGATORY.
 
 START-OF-SELECTION.
 
-  " Set the plant and material number
-  lv_werks = 'C1M0'. " Example plant
-  lv_matnr = '10123867'. " Example material number
+DATA: lv_maktx TYPE maktg.
 
-  " Fetch the material description from MARA and MAKT tables
-  SELECT SINGLE maktg INTO lv_maktx
-    FROM makt
-    WHERE matnr = lv_matnr
+  SELECT SINGLE maktg FROM makt INTO lv_maktx
+    WHERE matnr = p_matnr
       AND spras = sy-langu.
 
   IF sy-subrc = 0.
-    WRITE: / 'Plant:', lv_werks,
-           / 'Material Number:', lv_matnr,
+    WRITE: / 'Plant:', p_werks,
+           / 'Material Number:', p_matnr,
            / 'Material Description:', lv_maktx.
   ELSE.
-    WRITE: / 'Material not found for Material Number:', lv_matnr.
+    WRITE: / 'Material not found for Material Number:', p_matnr.
   ENDIF.
