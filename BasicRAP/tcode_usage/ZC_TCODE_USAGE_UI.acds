@@ -1,0 +1,44 @@
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Consumption for UI and service.'
+@Metadata.allowExtensions: true
+@Search.searchable: true
+
+@UI.headerInfo: {
+    typeName: 'Transaction Usage',
+    typeNamePlural: 'Transaction Usages',
+    title: {
+        value: 'TransactionCode'
+    },
+    description: {
+        value: 'AbapProgram'
+    }
+}
+
+@UI.presentationVariant: [{
+    sortOrder: [{
+        by: 'ExecutionCount',
+        direction: #DESC
+    }]
+}]
+
+define root view entity ZC_TCODE_USAGE
+  provider contract transactional_query
+  as projection on ZI_TCODE_USAGE_R
+{
+  key PeriodStart,
+  @search.defaultSearchElement: true
+  @EndUserText.label: 'Transaction Code'
+  key TransactionCode,
+
+      PeriodEnd,
+      @search.defaultSearchElement: true
+      @EndUserText.label: 'Execution Count'
+      ExecutionCount,
+
+      @EndUserText.label: 'Program Name'
+      AbapProgram,
+      LoadId,
+      CreatedAt,
+      CreatedBy
+}
