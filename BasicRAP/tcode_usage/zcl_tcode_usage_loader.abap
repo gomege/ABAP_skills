@@ -25,9 +25,8 @@ CLASS zcl_tcode_usage_loader DEFINITION
     " ---------------------------------------------------------------
     METHODS load
       IMPORTING iv_date_from TYPE datum OPTIONAL
-                iv_date_to   TYPE datum OPTIONAL
       EXPORTING et_result    TYPE tt_tcode_count
-      RAISING   cx_root. " pick a suitable exception class
+      RAISING   cx_root.
 ENDCLASS.
 
 
@@ -35,13 +34,19 @@ ENDCLASS.
 " implementation of the class
 " ---------------------------------------------------------------
 CLASS zcl_tcode_usage_loader IMPLEMENTATION.
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_TCODE_USAGE_LOADER->LOAD
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DATE_FROM                   TYPE        DATUM(optional)
+* | [--->] IV_DATE_TO                     TYPE        DATUM(optional)
+* | [<---] ET_RESULT                      TYPE        TT_TCODE_COUNT
+* | [!CX!] CX_ROOT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD load.
-    " TODO: parameter IV_DATE_TO is never used (ABAP cleaner)
-
     DATA lt_usertcode TYPE STANDARD TABLE OF swncaggusertcode.
-    DATA ls_usertcode LIKE LINE OF lt_usertcode.
-    DATA lt_counts    TYPE HASHED TABLE OF ty_tcode_count WITH UNIQUE KEY tcode.
-    DATA ls_count     TYPE ty_tcode_count.
+    FIELD-SYMBOLS <ls_usertcode> TYPE swncaggusertcode.
+    DATA lt_counts TYPE HASHED TABLE OF ty_tcode_count WITH UNIQUE KEY tcode.
+    FIELD-SYMBOLS <ls_count> TYPE ty_tcode_count.
 
     " 1. Get collector aggregates
     CALL FUNCTION 'SWNC_COLLECTOR_GET_AGGREGATES'
@@ -53,31 +58,27 @@ CLASS zcl_tcode_usage_loader IMPLEMENTATION.
                  OTHERS        = 2.
 
     IF sy-subrc <> 0.
-      CLEAR et_result.
+      et_result = VALUE tt_tcode_count( ).
       RETURN.
     ENDIF.
 
     " 2. Aggregate only Z-transactions
-    LOOP AT lt_usertcode INTO ls_usertcode
+    LOOP AT lt_usertcode ASSIGNING <ls_usertcode>
          WHERE     entry_id CP 'Z*'
                AND tasktype  = '01'.
 
-      READ TABLE lt_counts INTO ls_count
-           WITH TABLE KEY tcode = ls_usertcode-entry_id.
+      ASSIGN lt_counts[ tcode = <ls_usertcode>-entry_id ] TO <ls_count>.
 
       IF sy-subrc = 0.
-        ls_count-cnt += ls_usertcode-count.
-        MODIFY TABLE lt_counts FROM ls_count.
+        <ls_count>-cnt += <ls_usertcode>-count.
       ELSE.
-        ls_count-tcode = ls_usertcode-entry_id.
-        ls_count-cnt   = ls_usertcode-count.
-        INSERT ls_count INTO TABLE lt_counts.
+        INSERT VALUE ty_tcode_count( tcode = <ls_usertcode>-entry_id
+                                     cnt   = <ls_usertcode>-count )
+               INTO TABLE lt_counts.
       ENDIF.
     ENDLOOP.
 
     " 3. Return standard table
-    et_result = VALUE tt_tcode_count( FOR ls_count_row IN lt_counts
-                                      ( tcode = ls_count_row-tcode
-                                        cnt   = ls_count_row-cnt ) ).
+    et_result = lt_counts.
   ENDMETHOD.
 ENDCLASS.
