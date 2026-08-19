@@ -1,0 +1,17 @@
+@EndUserText.label: 'Transaction Code Usage'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@Metadata.allowExtensions: true
+
+define root view entity ZI_TCODE_USAGE_R
+  as select from zdt_tcode_usage
+{
+  key period_start    as PeriodStart,
+  key tcode           as TransactionCode,
+
+      period_end      as PeriodEnd,
+      abap_program    as AbapProgram,
+      exec_count      as ExecutionCount,
+      load_id         as LoadId,
+      created_at      as CreatedAt,
+      created_by      as CreatedBy
+}

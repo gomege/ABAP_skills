@@ -1,0 +1,5 @@
+@EndUserText.label: 'Transaction Usage Service'
+define service ZSIC_TCODE_USAGE
+{
+  expose ZC_TCODE_USAGE as TransactionUsage;
+}

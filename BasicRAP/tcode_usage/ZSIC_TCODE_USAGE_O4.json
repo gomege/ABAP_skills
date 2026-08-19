@@ -1,0 +1,21 @@
+{
+  "formatVersion": "1",
+  "header": {
+    "description": "binding on T-Code service report",
+    "originalLanguage": "en"
+  },
+  "bindingType": "ODATA V4",
+  "bindingTypeCategory": "ui",
+  "services": [
+    {
+      "name": "ZSIC_TCODE_USAGE",
+      "versions": [
+        {
+          "serviceVersion": "1.0.0",
+          "serviceBuildVersion": "",
+          "serviceDefinition": "ZSIC_TCODE_USAGE"
+        }
+      ]
+    }
+  ]
+}
