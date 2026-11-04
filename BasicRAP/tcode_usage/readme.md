@@ -1,57 +1,39 @@
-# TCODE_USAGE Fiori Migration Plan
+# TCODE_USAGE – from ALV report to Fiori Elements
 
-This folder contains the first backend-oriented migration work for the existing SAP GUI ALV report based on the transaction usage collector data.
+A learning exercise: start with a classic SAP GUI ALV report that shows how often Z-transactions are used, and take it step by step to a **Fiori Elements List Report** on a **RAP** backend.
 
 ## Current status
 
-Completed:
-1. Keep the logic that reads `SWNC_COLLECTOR_GET_AGGREGATES`
-2. Move that logic into an ABAP class
+The Fiori Elements app based on table `zdt_tcode_usage` is **deployed, published in the Fiori Launchpad and working**.
 
-The current class is:
+Done:
+1. Read workload data with `SWNC_COLLECTOR_GET_AGGREGATES`
+2. Move that logic into the reusable class `zcl_tcode_usage_loader`
+3. Persist the aggregated result in table `zdt_tcode_usage` (report `ZTEST_TCODE_USAGE_PERSIST`)
+4. Build the CDS views on top of the table, with Fiori annotations
+5. Expose the service and generate the Fiori Elements List Report
+6. Publish the app in the Fiori Launchpad
 
-- `zcl_tcode_usage_loader`
+## Road ahead
 
-It is responsible for:
-- calling `SWNC_COLLECTOR_GET_AGGREGATES`
-- reading the collected workload data
-- filtering `Z*` transaction codes
-- aggregating usage counts
-- returning a result table
+- Keep testing the app and the data load
+- Learn and implement **ABAP Unit tests** (e.g. for `zcl_tcode_usage_loader`)
+- Learn and implement **access control** (CDS access control / authorisations)
+- Then move the app from the sandbox system to a production system
+- Since there is no private data from any company, this can be moved to an IDES system to continue learning usage of ABAPGit
 
-The class is now being tested and debugged to confirm that the data-fetch path works correctly before moving to the Fiori layer.
+## Database table `zdt_tcode_usage`
 
-## Next open steps
+The table exists only in the SAP system; there is no source file for it in this repo.
 
-The following migration steps are still pending:
-
-3. Store the aggregated result in a custom table or another CDS-accessible source
-4. Build a CDS/RAP entity on top of that data
-5. Add Fiori annotations to the CDS/RAP entity
-6. Generate the Fiori Elements List Report
-7. Replace the Launchpad entry from the ALV report to the Fiori app
-
-## Notes for the current implementation
-
-- The old ALV report is still the UI entry point.
-- The class is now the reusable backend data loader.
-- The UI layer should not be the source of truth for the Fiori migration.
-- For the next stage, the runtime result must become a stable backend service model.
-
-## Important reminder
-
-Before moving to CDS/RAP, the class should be validated in ADT/VS Code by:
-- activating the class
-- creating a simple test report
-- executing it
-- verifying that the returned transaction codes and counts are correct
-
-## Suggested next prompt for continuing in another VS Code session
-
-Use this prompt in the next VS Code session:
-
-"Continue the migration for the `tcode_usage` project. Step 3 is next: create a custom table to persist the aggregated usage result from `zcl_tcode_usage_loader`. Then create a CDS view or RAP entity on top of that data, add Fiori annotations, and prepare the List Report generation. Keep the work incremental and explain each ABAP object and its purpose as we go."
-
-## Goal
-
-The final target is to replace the SAP GUI ALV report with a Fiori Elements List Report app, using a backend service model instead of an internal table displayed directly from a report.
+| Field | Key | Data element / type | Notes |
+|---|---|---|---|
+| MANDT | ✓ | MANDT | Client |
+| PERIOD_START | ✓ | DATS | First day of the period |
+| TCODE | ✓ | TCODE | CHAR 20, same as TSTC-TCODE |
+| PERIOD_END | | DATS | Last day of the loaded range |
+| ABAP_PROGRAM | | PROGRAMM | CHAR 40, filled from TSTC-PGMNA |
+| EXEC_COUNT | | INT4 | Execution count |
+| LOAD_ID | | CHAR 20 | Run identifier (time stamp of the load) |
+| CREATED_AT | | TIMESTAMPL | Time of the load |
+| CREATED_BY | | SYUNAME | User who ran the load |
